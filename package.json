@@ -1,0 +1,15 @@
+{
+  "name": "parrot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "parrot-minidrone": "https://github.com/matthewoden/npm-parrot-minidrone.git",
+    "xbox-controller": "^0.7.0"
+  }
+}
