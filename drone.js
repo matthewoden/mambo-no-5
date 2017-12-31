@@ -1,21 +1,25 @@
 const Drone = require("parrot-minidrone");
-
+const Three = require("three");
 // A wrapper around the parror minidrone library,
 // updated for use on High Sierra, and so commands are
 // chainable.
 
 class MiniDrone {
-  constructor(options = {}) {
+  constructor(options = {}, hooks = {}) {
     const defaults = {
       updateMS: 100,
       autoconnect: false,
       maxAltitude: 2,
       maxTilt: 40,
       maxVerticalSpeed: 0.5,
-      maxRotationSpeed: 150
+      maxRotationSpeed: 150, // degrees per second
+
+      onConnected: () => {},
+      onBatteryChange: () => {},
+      onRssiChange: () => {}
     };
 
-    Object.assign({}, defaults, options);
+    this.options = Object.assign({}, defaults, options);
     this.drone = new Drone(options);
 
     this.flightParams = {
@@ -28,6 +32,12 @@ class MiniDrone {
     // Event Listeners
     this.drone.on("connected", () => {
       this.connected = true;
+      this.options.onConnected();
+
+      setInterval(() => {
+        this.getRssi();
+        // this.getBatteryLevel();
+      }, 100);
     });
 
     this.drone.on("maxAltitudeChange", value => {
@@ -46,7 +56,13 @@ class MiniDrone {
       this.maxVerticalSpeed = value;
     });
 
-    // this.drone.connect();
+    this.drone.on("batteryStatusChange", status => {
+      this.options.onBatteryChange(status);
+    });
+
+    this.drone.on("rssiUpdate", status => {
+      this.options.onRssiChange(status);
+    });
   }
 
   // State
@@ -83,8 +99,9 @@ class MiniDrone {
     return this.setMaxAltitude;
   }
 
-  setFlightParams({ roll, pitch, yaw, altitude }) {
-    this.drone.setFlightParams({ roll, pitch, yaw, altitude });
+  setFlightParams(params) {
+    this.flightParams = Object.assign({}, this.flightParams, params);
+    this.drone.setFlightParams(params);
     return this;
   }
 
@@ -127,7 +144,7 @@ class MiniDrone {
   }
 
   emergencyLanding() {
-    this.drone.emergancyLanding();
+    this.drone.emergencyLanding();
     return this;
   }
 

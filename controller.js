@@ -4,6 +4,14 @@ function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+const led = {
+  ALTERNATE_BLINKING: 0x0c,
+  ONE_LIGHT: 0x06,
+  TWO_LIGHTS: 0x07,
+  THREE_LIGHTS: 0x08,
+  FOUR_LIGHTS: 0x09
+};
+
 const buttons = [
   "start",
   "back",
@@ -102,7 +110,7 @@ class Controller {
     cleanData.x = cleanData.x * -1; // inverse
 
     shouldUpdate(cleanData, this.leftStickData, () => {
-      this.options.onRightAnalogMove(cleanData) || console.log(cleanData);
+      this.options.onRightAnalogMove(cleanData);
     });
     this.leftStickData = cleanData;
 
@@ -121,7 +129,7 @@ class Controller {
     cleanData.x = cleanData.x * -1; // inverse
 
     shouldUpdate(cleanData, this.rightStickData, () => {
-      this.options.onLeftAnalogMove(cleanData) || console.log(cleanData);
+      this.options.onLeftAnalogMove(cleanData);
     });
     this.rightStickData = cleanData;
 
@@ -149,7 +157,7 @@ class Controller {
   onRightTriggerMove(delta) {
     const cleandata = this.normalizeTriggerInputs(delta);
 
-    this.options.onRightTriggerMove(cleandata) || console.log(cleandata);
+    this.options.onRightTriggerMove(cleandata);
     return this;
   }
 
@@ -163,9 +171,25 @@ class Controller {
   onLeftTriggerMove(delta) {
     const cleandata = this.normalizeTriggerInputs(delta);
 
-    this.options.onLeftTriggerMove(cleandata) || console.log(cleandata);
+    this.options.onLeftTriggerMove(cleandata);
 
     return this;
+  }
+
+  setFourLights() {
+    this.controller.setLed(led.FOUR_LIGHTS);
+  }
+  setThreeLights() {
+    this.controller.setLed(led.TWO_LIGHTS);
+  }
+  setTwoLights() {
+    this.controller.setLed(led.THREE_LIGHTS);
+  }
+  setOneLight() {
+    this.controller.setLed(led.ONE_LIGHT);
+  }
+  setBlinking() {
+    this.controller.setLed(led.ALTERNATE_BLINKING);
   }
 }
 

@@ -11,5 +11,8 @@
   "dependencies": {
     "parrot-minidrone": "https://github.com/matthewoden/npm-parrot-minidrone.git",
     "xbox-controller": "^0.7.0"
+  },
+  "devDependencies": {
+    "three": "^0.89.0"
   }
 }
